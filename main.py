@@ -10,9 +10,7 @@ api = Api(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tmp/database.db'
 db = SQLAlchemy(app)
 
-# api
-
-
+#model
 class VideoModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
@@ -31,7 +29,8 @@ class HelloWorldApi(Resource):
     def post(self):
         return {"data": "Hello World Posted"}
 
-
+    
+#for serializing the data fetched from db
 resource_fields = {
     "id": fields.Integer,
     "name": fields.String,
@@ -39,7 +38,7 @@ resource_fields = {
     "likes": fields.Integer
 }
 
-
+#api
 class Video(Resource):
     @marshal_with(resource_fields)
     def get(self, video_id):
@@ -60,6 +59,7 @@ class Video(Resource):
         db.session.commit()
 
         return video, 201
+        # 201 -> created success
 
     @marshal_with(resource_fields)
     def patch(self, video_id):
@@ -81,11 +81,14 @@ class Video(Resource):
 
     def delete(self, video_id):
         return '', 204
-        # 204 ->  deleted successfully
+        # 204 -> deleted successfully
 
 
+#url mapping for apis
 api.add_resource(HelloWorldApi, "/hello/<string:name>/<int:age>")
 api.add_resource(Video, "/video/<int:video_id>")
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)
